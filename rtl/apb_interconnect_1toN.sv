@@ -55,7 +55,7 @@ module apb_interconnect_1toN #(
 // Internal signals
 logic [N_SLAVES-1:0]        hit;
 bit                         no_hit;
-logic [DATA_WIDTH01:0]      D_PRDATA;
+logic [DATA_WIDTH-1:0]      D_PRDATA;
 bit                         D_PREADY;
 bit                         D_PSLVERR;
 logic [TIMEOUT_WIDTH-1:0]   thr;
