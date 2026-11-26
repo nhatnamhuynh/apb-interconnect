@@ -64,6 +64,19 @@ logic                       timeout;
 //  ADDRESS DECODER
 
 //  REQUEST FAN-OUT
+generate
+    for (genvar i = 0; i < N_SLAVES; i = i + 1) begin : fanout
+        always_comb begin
+            M_PSEL[i] = hit[i] & S_PSEL & warm_rstn_i;
+            M_PENABLE[i] = M_PSEL[i] & S_PENABLE;
+            M_PADDR[i] = (GATE_UNSELECTED && ~M_PSEL[i])?'0:S_PADDR;
+            M_PWRITE[i] = (GATE_UNSELECTED && ~M_PSEL[i])?'0:S_PWRITE;
+            M_PWDATA[i] = (GATE_UNSELECTED && ~M_PSEL[i])?'0:S_PWDATA;
+            M_PSTRB[i] = (GATE_UNSELECTED && ~M_PSEL[i])?'0:S_PSTRB;
+            M_PPROT[i] = (GATE_UNSELECTED && ~M_PSEL[i])?'0:S_PPROT;
+        end
+    end
+endgenerate
 
 //  DEFAULT SLAVE
 
