@@ -62,6 +62,24 @@ logic [TIMEOUT_WIDTH-1:0]   thr;
 logic                       timeout;
 
 //  ADDRESS DECODER
+localparam int unsigned OFFSET_BITS = $clog2(DATA_WIDTH/8);
+logic [ADDR_WIDTH-1:0]  aligned_paddr;
+
+assign aligned_paddr = (OFFSET_BITS > 0)?{S_PADDR[ADDR_WIDTH-1:OFFSET_BITS], {OFFSET_BITS{1'b0}}}:S_PADDR;
+
+generate
+    for (genvar i = 0; i < N_SLAVES; i = i + 1) begin : addr_comp
+        always_comb begin
+            if (aligned_paddr >= SLV_BASE_ADDR[i] && aligned_paddr < SLV_BASE_ADDR[i] + SLV_ADDR_SIZE[i])begin
+                hit[i] = 1'b1;
+            end else begin
+                hit[i] = 1'b0;
+            end
+        end
+    end
+endgenerate
+
+assign no_hit = ~(|hit) & S_PSEL;
 
 //  REQUEST FAN-OUT
 generate
