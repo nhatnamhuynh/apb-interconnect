@@ -54,12 +54,12 @@ module apb_interconnect_1toN #(
 
 // Internal signals
 logic [N_SLAVES-1:0]        hit;
-bit                         no_hit;
+logic                       no_hit;
 logic [DATA_WIDTH-1:0]      D_PRDATA;
-bit                         D_PREADY;
-bit                         D_PSLVERR;
+logic                       D_PREADY;
+logic                       D_PSLVERR;
 logic [TIMEOUT_WIDTH-1:0]   thr;
-bit                         timeout;
+logic                       timeout;
 
 //  ADDRESS DECODER
 
