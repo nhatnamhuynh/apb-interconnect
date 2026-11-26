@@ -70,6 +70,33 @@ bit                         timeout;
 //  MUX RESPONSE
 
 //  COUNTER
+logic                       slv_selected,
+                            phase_access,
+                            slv_ready,
+                            wait_state,
+                            clr_cnt,
+                            thr_en,
+                            matched;
+logic [TIMEOUT_WIDTH-1:0]   wait_cnt = '0;
+
+assign slv_selected = |M_PSEL;
+assign phase_access = slv_selected & S_PENABLE;
+assign slv_ready    = | (M_PREADY & M_PSEL);
+assign wait_state   = phase_access & ~slv_ready;
+assign thr_en       = thr != '0;
+assign matched      = | (wait_cnt > thr);
+assign timeout      = wait_state & matched & warm_rstn_i & thr_en;
+
+assign clr_cnt = ~phase_access | slv_ready | timeout | ~warm_rstn_i | ~thr_en;
+
+// generate
+// endgenerate
+
+always_ff @(posedge PCLK, negedge PRESETn) begin
+  if (!PRESETn) wait_cnt <= '0; 
+  else if (clr_cnt) wait_cnt <= '0;
+  else wait_cnt <= wait_cnt + 1'b1;
+end
 
 //  CSR INTERFACE
 
